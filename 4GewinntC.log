@@ -1,0 +1,17 @@
+﻿Der Buildvorgang wurde am 28.04.2017 12:46:51 gestartet.
+     1>Projekt "c:\Users\f0213\documents\visual studio 2013\Projects\4GewinntC\4GewinntC\4GewinntC.vcxproj" auf Knoten "2", Build Ziel(e).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\4GewinntC.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt 4GewinntC.cpp
+         4GewinntC.cpp
+     1>c:\users\f0213\documents\visual studio 2013\projects\4gewinntc\4gewinntc\4gewinntc.cpp(58): warning C4101: 'i': Unreferenzierte lokale Variable
+     1>c:\users\f0213\documents\visual studio 2013\projects\4gewinntc\4gewinntc\4gewinntc.cpp(59): warning C4101: 'j': Unreferenzierte lokale Variable
+     1>c:\users\f0213\documents\visual studio 2013\projects\4gewinntc\4gewinntc\4gewinntc.cpp(137): warning C4101: 'zeichnen': Unreferenzierte lokale Variable
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"c:\users\f0213\documents\visual studio 2013\Projects\4GewinntC\Debug\4GewinntC.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"c:\users\f0213\documents\visual studio 2013\Projects\4GewinntC\Debug\4GewinntC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"c:\users\f0213\documents\visual studio 2013\Projects\4GewinntC\Debug\4GewinntC.lib" /MACHINE:X86 Debug\4GewinntC.obj
+         Debug\stdafx.obj
+         4GewinntC.vcxproj -> c:\users\f0213\documents\visual studio 2013\Projects\4GewinntC\Debug\4GewinntC.exe
+     1>Die Erstellung des Projekts "c:\Users\f0213\documents\visual studio 2013\Projects\4GewinntC\4GewinntC\4GewinntC.vcxproj" ist abgeschlossen, Build Ziel(e).
+
+Build erfolgreich.
+
+Verstrichene Zeit 00:00:02.38
