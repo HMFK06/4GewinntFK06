@@ -9,6 +9,7 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+//asdklfjasdklfjasdöklajfsdklfjsd öklsdjföklsdfjs öklfsdjöflas
 
 char spielFeld[6][7];
 char zeichen;
