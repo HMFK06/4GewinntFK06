@@ -10,7 +10,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 
-
 char spielFeld[6][7];
 char zeichen;
 int spieler = 1;
