@@ -1,6 +1,6 @@
 // 4GewinntC.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
 //
-// opttikkkkkk
+// test
 
 #include "stdafx.h"
 #include <stdlib.h>
