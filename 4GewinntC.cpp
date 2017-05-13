@@ -1,6 +1,5 @@
 // 4GewinntC.cpp : Definiert den Einstiegspunkt für die Konsolenanwendung.
 //
-// test
 
 #include "stdafx.h"
 #include <stdlib.h>
@@ -10,22 +9,39 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 //asdklfjasdklfjasdöklajfsdklfjsd öklsdjföklsdfjs öklfsdjöflas
+enum Farbe{ Rot = 1, Blau = -1, Leer = 0 };
 
 char spielFeld[6][7];
 char zeichen;
-int spieler = 1;
+Farbe spieler = Rot;
 int init(void);
 int ergebnis(int sp);
 int zeile(void);
 int spalte(void);
 int ausgabe(int i, int j, int sp);
+int erg;
 
 void Spielzug(void);
+
+
+Farbe Spielerwechsel(Farbe farbe)
+{
+
+	if (farbe == Rot)
+	{
+		return Blau;
+	}
+	else if (farbe == Blau)
+	{
+		return Rot;
+	}
+
+}
 
 void get_computer_move(void)
 {
 	int i, j;
-	spieler *= -1;
+	int farbe = Rot;
 	for (i = 0; i < 5; i++)
 	{
 		for (j = 0; j < 6; j++)
@@ -78,8 +94,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf(" n 5- 0 0 0 0 0 0 0\n\n");
 
 
-	while ((runde>0) && (ergebnis(spieler) <4)) //Das Spiel läuft so lange bis alle 42 Felder besetzt sind oder ein Spieler gewonnen hat.
+	do
 	{
+
 		//i = zeile();
 		//j = spalte();
 		//spieler *= -1;
@@ -87,14 +104,19 @@ int _tmain(int argc, _TCHAR* argv[])
 		Spielzug();
 		printf("\n");
 		runde--;
+		//erg = ergebnis(spieler);
+		spieler = Spielerwechsel(spieler);
 		printf("Ich denke nach...!\n");
 		Sleep(1000);
 		get_computer_move();
+		//erg = ergebnis(spieler);
+		spieler = Spielerwechsel(spieler);
 		printf("\n");
 		runde--;
-	}
+	} while (runde > 0 && ergebnis(Spielerwechsel(spieler))<4);
+	
 	if (runde>0)
-		printf("Sieg!!!\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
+		printf("Sieg!!! Spieler %d hat gewonnen\n",spieler); //Hat ein Spieler gewonnen so erschein diese Meldung.
 
 	system("pause"); //damit sich das Programm nicht selber beendet wen das Spiel fertig ist.
 	return 0;
@@ -122,7 +144,7 @@ void Spielzug(void)
 	printf("Spalte: ");
 	scanf_s("%d", &x);
 
-	spieler *= -1;
+
 	for (size_t i = 5; i>0; i--)
 	{
 		if (spielFeld[i][x] == '0')
@@ -141,18 +163,28 @@ int ergebnis(int sp)
 		zeichen = 'A';
 	else
 		zeichen = 'B';
+	//Zeilen
+	//zeichen = 'A';
 	for (j=0 ; j < 6; j++)
 	{
 		if (r < 4)
 			r = 0;
 		for (i = 0; i < 6; i++)
 		{
-			if (spielFeld[i][j] == zeichen)
+			if (spielFeld[j][i] == zeichen)
+			{
 				r++;
+				if (r >= 4)
+				{
+					break;
+				}
+			}
+			
 			else if (r < 4)
 				r = 0;
 		}
 	}
+	//Spalten
 	for (j = 0; j < 7; j++)
 	{
 		if (r < 4)
@@ -165,7 +197,6 @@ int ergebnis(int sp)
 			else if (r < 4)
 				r = 0;
 		}
-
 	}
 
 	return r;
@@ -189,5 +220,7 @@ int ausgabe(int i, int j, int sp)
 	}
 	return 0;
 }
+
+
 
 
