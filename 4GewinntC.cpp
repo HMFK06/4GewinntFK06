@@ -38,6 +38,7 @@ Farbe Spielerwechsel(Farbe farbe)
 
 }
 
+
 void get_computer_move(void)
 {
 	int i, j;
@@ -56,18 +57,59 @@ void get_computer_move(void)
 	}
 	else
 	{
-		for (size_t a = 5; a>0; a--)
+		for (size_t a = 5; a > 0; a--)
 		{
-			if (spielFeld[a][j] == '0')
+			int random_spalte = rand() % 5 + 1;
+			if (spielFeld[a][random_spalte] == '0')
 			{
-				ausgabe(a, j, spieler);
-				break;
+				ausgabe(a, random_spalte, spieler);
 			}
 		}
+		}
+		
 	}			
+
+
+void Simulate(int wieOft)
+{
+	int runde = 42;
+	int a_gewonnen = 0;
+	int b_gewonnen = 0;
+	int unentschieden = 0;
+	spieler = Spielerwechsel(Rot);
+	for (size_t i = 0; i < wieOft; i++)
+	{
+		do
+		{
+			spieler = Spielerwechsel(spieler);
+			get_computer_move();
+			runde--;
+			erg = ergebnis(spieler);
+			if (erg > 4)
+			{
+				break;
+			}
+			spieler = Spielerwechsel(spieler);
+			get_computer_move();
+			erg = ergebnis(spieler);
+			runde--;
+		} while (runde > 0 && erg<4);
+		if (runde>0)
+		{
+			if (spieler > 0)
+				b_gewonnen++;
+			else
+				a_gewonnen++;
+		}
+		else
+			unentschieden++;
+
+		printf("\nA gewonnen: %d \n B gewonnen: %d\n Untenschieden: %d", a_gewonnen, b_gewonnen, unentschieden);
+
+	}
+	
+
 }
-
-
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -96,28 +138,32 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	do
 	{
-
-		//i = zeile();
-		//j = spalte();
-		//spieler *= -1;
-		//ausgabe(i, j, spieler);
+		spieler = Spielerwechsel(spieler);
 		Spielzug();
 		printf("\n");
 		runde--;
-		//erg = ergebnis(spieler);
+		erg = ergebnis(spieler);
+		if (erg > 4)
+		{
+			break;
+		}
 		spieler = Spielerwechsel(spieler);
 		printf("Ich denke nach...!\n");
-		Sleep(1000);
+		//Sleep(1000);
 		get_computer_move();
-		//erg = ergebnis(spieler);
-		spieler = Spielerwechsel(spieler);
+		erg = ergebnis(spieler);
 		printf("\n");
 		runde--;
-	} while (runde > 0 && ergebnis(Spielerwechsel(spieler))<4);
+	} while (runde > 0 && erg<4);
 	
 	if (runde>0)
-		printf("Sieg!!! Spieler %d hat gewonnen\n",spieler); //Hat ein Spieler gewonnen so erschein diese Meldung.
+	{
 
+		if (spieler > 0)
+			printf("Sieg!!! Spieler Rot hat gewonnen\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
+		else
+			printf("Sieg!!! Spieler Blau hat gewonnen\n");
+	}
 	system("pause"); //damit sich das Programm nicht selber beendet wen das Spiel fertig ist.
 	return 0;
 }
@@ -206,7 +252,6 @@ int ausgabe(int i, int j, int sp)
 {
 	int a;
 	int b;
-
 	if (sp<0)
 		spielFeld[i][j] = 'A';
 	if (sp>0)
