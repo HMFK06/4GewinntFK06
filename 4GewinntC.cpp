@@ -125,7 +125,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	openSpaces.push_back(make_pair('2', '3'));
 	pair<char,char> a = openSpaces[0];
-	//int runde = 42; //42 ergibt sich aus der maximal Anzahl Felder die das Spielfeld hat. 7*6=42.
+	int runde = 42; //42 ergibt sich aus der maximal Anzahl Felder die das Spielfeld hat. 7*6=42.
 	int i;
 	int j;
 	 //Diese Variabel gibt den aktuellen Spieler an. 1 steht für Spieler B (=Spieler 2) und -1 steht für Spieler A (=Spieler 1).
@@ -278,37 +278,37 @@ int ausgabe(int i, int j, int sp)
 	return 0;
 }
 
-pair<char,char> GetBestMove(Farbe sp, char spielFeld[6][7])
-{
-	char bestSpace[1][1];
-
-	char newBoard[6][7];
-
-	char zeichen;
-
-	if (sp < 0)
-		zeichen = 'A';
-	else
-		zeichen = 'B';
-
-	for (size_t i = 0; i < sizeof(openSpaces); i++)
-	{
-		memcpy(newBoard, spielFeld, sizeof(spielFeld)); //Spielfeld kopieren
-
-		pair<char, char> newSpace = openSpaces[i];
-		newBoard[newSpace.first][newSpace.second] = sp;
-		runde--;
-		if (ergebnis(spieler)<4)
-		{
-			pair<char, char> tempMove = GetBestMove(Spielerwechsel(spieler), newBoard);
-
-
-	}
-
-
-	
-
-	}
-
-	return NULL;
-}
+////pair<char,char> GetBestMove(Farbe sp, char spielFeld[6][7])
+//{
+//	char bestSpace[1][1];
+//
+//	char newBoard[6][7];
+//
+//	char zeichen;
+//
+//	if (sp < 0)
+//		zeichen = 'A';
+//	else
+//		zeichen = 'B';
+//
+//	for (size_t i = 0; i < sizeof(openSpaces); i++)
+//	{
+//		memcpy(newBoard, spielFeld, sizeof(spielFeld)); //Spielfeld kopieren
+//
+//		pair<char, char> newSpace = openSpaces[i];
+//		newBoard[newSpace.first][newSpace.second] = sp;
+//		runde--;
+//		if (ergebnis(spieler)<4)
+//		{
+//			pair<char, char> tempMove = GetBestMove(Spielerwechsel(spieler), newBoard);
+//
+//
+//	}
+//
+//
+//	
+//
+//	}
+//
+//	return NULL;
+//}
