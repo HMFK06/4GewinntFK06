@@ -57,7 +57,7 @@ Farbe Spielerwechsel(Farbe farbe)
 		void loop()
 		{
 			lcd.setCursor(0, 0); // In der ersten Zeile soll der Text „Computer´s“ angezeigt werden.
-			lcd.print("Computer´s");
+			lcd.print("Dein");
 			lcd.setCursor(0, 1);  // In der zweiten Zeile soll "Zug" angezeigt werden.
 			lcd.print("Zug"); // lcd.print um etwas auf dem Display anzeigen zu lassen.
 			delay(500);
