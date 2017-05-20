@@ -9,6 +9,7 @@
 #include <vector>
 #include <map>
 #include <stack>
+#include <time.h>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -24,10 +25,12 @@ int init(void);
 int ergebnis(int sp);
 int ausgabe(int i, int j, int sp);
 int erg;
-int GetBestMove(Farbe sp, char spielFeld[6][7]);
+pair<char, char> GetBestMove(Farbe sp, char spielFeld[6][7]);
 vector<pair<char,char>> openSpaces;
 stack<int, vector<int>> op;
 int runde;
+int minimax(char spielFeld[6][7], Farbe spieler);
+void computerMove(char spielFeld[6][7]);
 
 
 
@@ -48,6 +51,12 @@ Farbe Spielerwechsel(Farbe farbe)
 
 }
 
+int randomGenerator(int max, int min)
+{
+	srand(time(NULL));
+	int random = rand() % max + min;
+	return random;
+}
 
 void get_computer_move(void)
 {
@@ -69,10 +78,12 @@ void get_computer_move(void)
 	{
 		for (size_t a = 5; a > 0; a--)
 		{
-			int random_spalte = rand() % 5 + 1;
+			int random_spalte = randomGenerator(6, 0);
+			//cout <<"Die Zufallszahl lauetet" << random_spalte << endl;
 			if (spielFeld[a][random_spalte] == '0')
 			{
 				ausgabe(a, random_spalte, spieler);
+				break;
 			}
 		}
 		}
@@ -86,7 +97,7 @@ void Simulate(int wieOft)
 	int a_gewonnen = 0;
 	int b_gewonnen = 0;
 	int unentschieden = 0;
-	spieler = Spielerwechsel(Rot);
+	spieler = Spielerwechsel(Blau);
 	for (size_t i = 0; i < wieOft; i++)
 	{
 		do
@@ -95,7 +106,7 @@ void Simulate(int wieOft)
 			get_computer_move();
 			runde--;
 			erg = ergebnis(spieler);
-			if (erg > 4)
+			if (erg >= 4)
 			{
 				break;
 			}
@@ -114,7 +125,7 @@ void Simulate(int wieOft)
 		else
 			unentschieden++;
 
-		printf("\nA gewonnen: %d \n B gewonnen: %d\n Untenschieden: %d", a_gewonnen, b_gewonnen, unentschieden);
+		//printf("\nA gewonnen: %d \nB gewonnen: %d\nUntenschieden: %d\n", a_gewonnen, b_gewonnen, unentschieden);
 
 	}
 	
@@ -146,36 +157,36 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf(" l 3- 0 0 0 0 0 0 0\n");
 	printf(" e 4- 0 0 0 0 0 0 0\n");
 	printf(" n 5- 0 0 0 0 0 0 0\n\n");
+	computerMove(spielFeld);
+	Simulate(100);
+	//do
+	//{
+	//	spieler = Spielerwechsel(spieler);
+	//	Spielzug();
+	//	printf("\n");
+	//	runde--;
+	//	erg = ergebnis(spieler);
+	//	if (erg >= 4)
+	//	{
+	//		break;
+	//	}
+	//	spieler = Spielerwechsel(spieler);
+	//	printf("Ich denke nach...!\n");
+	//	//Sleep(1000);
+	//	get_computer_move();
+	//	erg = ergebnis(spieler);
+	//	printf("\n");
+	//	runde--;
+	//} while (runde > 0 && erg<4);
+	//
+	//if (runde>0)
+	//{
 
-
-	do
-	{
-		spieler = Spielerwechsel(spieler);
-		Spielzug();
-		printf("\n");
-		runde--;
-		erg = ergebnis(spieler);
-		if (erg > 4)
-		{
-			break;
-		}
-		spieler = Spielerwechsel(spieler);
-		printf("Ich denke nach...!\n");
-		//Sleep(1000);
-		get_computer_move();
-		erg = ergebnis(spieler);
-		printf("\n");
-		runde--;
-	} while (runde > 0 && erg<4);
-	
-	if (runde>0)
-	{
-
-		if (spieler > 0)
-			printf("Sieg!!! Spieler Rot hat gewonnen\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
-		else
-			printf("Sieg!!! Spieler Blau hat gewonnen\n");
-	}
+	//	if (spieler > 0)
+	//		printf("Sieg!!! Spieler Rot hat gewonnen\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
+	//	else
+	//		printf("Sieg!!! Spieler Blau hat gewonnen\n");
+	//}
 	system("pause"); //damit sich das Programm nicht selber beendet wen das Spiel fertig ist.
 	return 0;
 }
@@ -247,11 +258,19 @@ int ergebnis(int sp)
 	{
 		if (r < 4)
 			r = 0;
-		for (i = 0; i < 7; i++)
+		for (i = 0; i < 6; i++)
 		{
 
-			if (spielFeld[j][i] == zeichen)
+			if (spielFeld[i][j] == zeichen)
+			{
+
 				r++;
+				if (r >= 4)
+				{
+					break;
+				}
+			}
+
 			else if (r < 4)
 				r = 0;
 		}
@@ -278,7 +297,7 @@ int ausgabe(int i, int j, int sp)
 	return 0;
 }
 
-////pair<char,char> GetBestMove(Farbe sp, char spielFeld[6][7])
+//pair<char,char> GetBestMove(Farbe sp, char spielFeld[6][7])
 //{
 //	char bestSpace[1][1];
 //
@@ -312,3 +331,63 @@ int ausgabe(int i, int j, int sp)
 //
 //	return NULL;
 //}
+
+int minimax(char spielFeld[6][7], Farbe spieler)
+{
+	int winner = ergebnis(spieler);
+	if (winner != 0) return winner*spieler;
+	if (spieler < 0)
+		zeichen = 'A';
+	else
+		zeichen = 'B';
+	int move = -1;
+	int score = -2;
+	int i;
+	int j;
+	for (i = 0; i < 5; i++)
+	{
+		for (j = 0; j < 6; j++)
+		{
+			if (spielFeld[i][j] == '0')
+			{
+				spielFeld[i][j] = zeichen;
+				int thisScore = -minimax(spielFeld, Spielerwechsel(spieler));
+				if (thisScore>score)
+				{
+					score = thisScore;
+					move = i;
+				}
+				spielFeld[i][j] = 0;
+			}
+		}
+		if (move == -1) return 0;
+		return score;
+	}
+}
+void computerMove(char spielFeld[6][7])
+{
+	int move = -1;
+	int score = -2;
+	int i;
+	int j;
+	for (i = 0; i < 5; i++)
+	{
+		for (j = 0; j < 6; j++)
+		{
+			if (spielFeld[i][j] == '0')
+			{
+				spielFeld[i][j] = 1;
+				int tempScore = -minimax(spielFeld, Rot);
+				if (tempScore>score)
+				{
+					score = tempScore;
+					move = i;
+				}
+				spielFeld[i][j] = 0;
+			}
+			ausgabe(i, j, 1);
+		}
+
+	}
+
+}
