@@ -10,6 +10,7 @@
 #include <map>
 #include <stack>
 #include <time.h>
+#include <algorithm>
 
 #define _CRT_SECURE_NO_WARNINGS
 
@@ -26,11 +27,18 @@ int ergebnis(int sp);
 int ausgabe(int i, int j, int sp);
 int erg;
 pair<char, char> GetBestMove(Farbe sp, char spielFeld[6][7]);
-vector<pair<char,char>> openSpaces;
+vector<pair<char, char>> openSpaces;
 stack<int, vector<int>> op;
 int runde;
 int minimax(char spielFeld[6][7], Farbe spieler);
 void computerMove(char spielFeld[6][7]);
+
+
+
+int play_randomly(char spielFeld[6][7]);
+
+int TrytoWin(char spielFeld[6][7], Farbe sp);
+void simulate_plays(char spielFeld[6][7], int number);
 
 
 
@@ -42,26 +50,10 @@ Farbe Spielerwechsel(Farbe farbe)
 
 	if (farbe == Rot)
 	{
-		void loop();
-		{
-			lcd.setCursor(0, 0); // In der ersten Zeile soll der Text „Computer´s“ angezeigt werden.
-			lcd.print("Computer´s");
-			lcd.setCursor(0, 1);  // In der zweiten Zeile soll "Zug" angezeigt werden.
-			lcd.print("Zug"); // lcd.print um etwas auf dem Display anzeigen zu lassen.
-			delay(500);
-
 		return Blau;
 	}
 	else if (farbe == Blau)
 	{
-		void loop()
-		{
-			lcd.setCursor(0, 0); // In der ersten Zeile soll der Text „Computer´s“ angezeigt werden.
-			lcd.print("Dein");
-			lcd.setCursor(0, 1);  // In der zweiten Zeile soll "Zug" angezeigt werden.
-			lcd.print("Zug"); // lcd.print um etwas auf dem Display anzeigen zu lassen.
-			delay(500);
-		Serial.println("Dein Zug");
 		return Rot;
 	}
 
@@ -78,9 +70,9 @@ void get_computer_move(void)
 {
 	int i, j;
 	int farbe = Rot;
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < 6; i++)
 	{
-		for (j = 0; j < 6; j++)
+		for (j = 0; j < 7; j++)
 		{
 			if (spielFeld[i][j] == '0')
 				break;
@@ -94,7 +86,7 @@ void get_computer_move(void)
 	{
 		for (size_t a = 5; a > 0; a--)
 		{
-			int random_spalte = randomGenerator(6, 0);
+			int random_spalte = TrytoWin(spielFeld, spieler);
 			//cout <<"Die Zufallszahl lauetet" << random_spalte << endl;
 			if (spielFeld[a][random_spalte] == '0')
 			{
@@ -102,9 +94,9 @@ void get_computer_move(void)
 				break;
 			}
 		}
-		}
-		
-	}			
+	}
+
+}
 
 
 void Simulate(int wieOft)
@@ -141,21 +133,21 @@ void Simulate(int wieOft)
 		else
 			unentschieden++;
 
-		//printf("\nA gewonnen: %d \nB gewonnen: %d\nUntenschieden: %d\n", a_gewonnen, b_gewonnen, unentschieden);
+		printf("\nA gewonnen: %d \nB gewonnen: %d\nUntenschieden: %d\n", a_gewonnen, b_gewonnen, unentschieden);
 
 	}
-	
+
 
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	openSpaces.push_back(make_pair('2', '3'));
-	pair<char,char> a = openSpaces[0];
+	pair<char, char> a = openSpaces[0];
 	int runde = 42; //42 ergibt sich aus der maximal Anzahl Felder die das Spielfeld hat. 7*6=42.
 	int i;
 	int j;
-	 //Diese Variabel gibt den aktuellen Spieler an. 1 steht für Spieler B (=Spieler 2) und -1 steht für Spieler A (=Spieler 1).
+	//Diese Variabel gibt den aktuellen Spieler an. 1 steht für Spieler B (=Spieler 2) und -1 steht für Spieler A (=Spieler 1).
 	init();
 
 	printf("4 Gewinnt\n"); //Titel
@@ -173,8 +165,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf(" l 3- 0 0 0 0 0 0 0\n");
 	printf(" e 4- 0 0 0 0 0 0 0\n");
 	printf(" n 5- 0 0 0 0 0 0 0\n\n");
-	computerMove(spielFeld);
-	Simulate(100);
+	int value = TrytoWin(spielFeld, spieler);
+	Simulate(10);
+
 	//do
 	//{
 	//	spieler = Spielerwechsel(spieler);
@@ -223,6 +216,52 @@ int init(void)
 }
 
 
+int TrytoWin(char spielFeld[6][7], Farbe sp)
+{
+	int bestColumn = 0;
+	int bestScoreInHorizontal = 0;
+	int bestScoreInVertikal = 0;
+	int i, j, r = 0;
+	if (sp < 0)
+		zeichen = 'A';
+	else
+		zeichen = 'B';
+
+	for (j = 0; j < 6; j++)
+	{
+		if (r < 4)
+			r = 0;
+		for (i = 0; i < 6; i++)
+		{
+			if (spielFeld[j][i] == zeichen)
+			{
+				bestScoreInHorizontal++;
+			}
+		}
+	}
+
+	for (j = 0; j < 7; j++)
+	{
+		if (r < 4)
+			r = 0;
+		for (i = 0; i < 6; i++)
+		{
+
+			if (spielFeld[i][j] == zeichen)
+			{
+				bestScoreInVertikal++;
+
+			}
+		}
+	}
+	if (bestScoreInHorizontal>bestScoreInVertikal)
+		return bestScoreInHorizontal;
+	else if (bestScoreInVertikal > bestScoreInHorizontal)
+		return bestScoreInVertikal;
+	else
+		return randomGenerator(7, 0);
+}
+
 void Spielzug(void)
 {
 	int x;
@@ -250,7 +289,7 @@ int ergebnis(int sp)
 		zeichen = 'B';
 	//Zeilen
 	//zeichen = 'A';
-	for (j=0 ; j < 6; j++)
+	for (j = 0; j < 6; j++)
 	{
 		if (r < 4)
 			r = 0;
@@ -264,7 +303,7 @@ int ergebnis(int sp)
 					break;
 				}
 			}
-			
+
 			else if (r < 4)
 				r = 0;
 		}
@@ -405,5 +444,56 @@ void computerMove(char spielFeld[6][7])
 		}
 
 	}
+
+}
+
+int play_randomly(char spielFeld[6][7])
+{
+	int value = ergebnis(spieler);
+	int moves = 42;
+	int a_gewonnen = 0;
+	int b_gewonnen = 0;
+	int unentschieden = 0;
+	int count[1][1][1];
+	count[0][0][0] = 0;
+	while (value == 0 && moves>0)
+	{
+
+		if (moves == 0) return 0;
+		get_computer_move();
+		moves--;
+		value = ergebnis(spieler);
+		if (value >= 4)
+		{
+			string gewinner = (spieler = Rot) ? "Rot" : "Blau";
+			printf("Spieler %s hat gewonnen !\n", gewinner);
+			if (spieler == Rot)
+				b_gewonnen++;
+
+			else if (spieler == Blau)
+				a_gewonnen++;
+			else
+				unentschieden++;
+			break;
+		}
+		spieler = Spielerwechsel(spieler);
+	}
+	count[0][0][0] = a_gewonnen, b_gewonnen, unentschieden;
+	//cout << count << endl;
+	return value;
+}
+
+void simulate_plays(char spielFeld[6][7], int number)
+{
+	while (number > 0)
+	{
+		char newBoard[6][7];
+		//copy_n(spielFeld, 42, newBoard);
+		newBoard[6][7] = spielFeld[6][7];
+		play_randomly(newBoard);
+		number--;
+	}
+
+
 
 }
