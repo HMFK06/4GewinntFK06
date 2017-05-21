@@ -24,7 +24,7 @@ char zeichen;
 Farbe spieler = Rot;
 int init(void);
 int ergebnis(int sp);
-int ausgabe(int i, int j, int sp);
+bool ausgabe(int i, int j, int sp);
 int erg;
 pair<char, char> GetBestMove(Farbe sp, char spielFeld[6][7]);
 vector<pair<char, char>> openSpaces;
@@ -84,15 +84,21 @@ void get_computer_move(void)
 	}
 	else
 	{
+		bool ausgegeben = true;
+		int random_spalte;
 		for (size_t a = 5; a > 0; a--)
 		{
-			int random_spalte = TrytoWin(spielFeld, spieler);
+			if (ausgegeben)
+				random_spalte = TrytoWin(spielFeld, spieler);
 			//cout <<"Die Zufallszahl lauetet" << random_spalte << endl;
 			if (spielFeld[a][random_spalte] == '0')
 			{
-				ausgabe(a, random_spalte, spieler);
+				ausgegeben = ausgabe(a, random_spalte, spieler);
 				break;
 			}
+			else
+				ausgegeben = false;
+			
 		}
 	}
 
@@ -166,7 +172,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf(" e 4- 0 0 0 0 0 0 0\n");
 	printf(" n 5- 0 0 0 0 0 0 0\n\n");
 	int value = TrytoWin(spielFeld, spieler);
-	Simulate(10);
+	Simulate(1);
 
 	//do
 	//{
@@ -221,43 +227,47 @@ int TrytoWin(char spielFeld[6][7], Farbe sp)
 	int bestColumn = 0;
 	int bestScoreInHorizontal = 0;
 	int bestScoreInVertikal = 0;
+	int bestPlaceForHorizontal, bestPlaceForVertikal;
 	int i, j, r = 0;
 	if (sp < 0)
 		zeichen = 'A';
 	else
 		zeichen = 'B';
+	//horizontal
 
-	for (j = 0; j < 6; j++)
+	for (j = 6; j > 0; j--)
 	{
 		if (r < 4)
 			r = 0;
-		for (i = 0; i < 6; i++)
+		for (i = 7; i >0; i--)
 		{
 			if (spielFeld[j][i] == zeichen)
 			{
 				bestScoreInHorizontal++;
+				bestPlaceForHorizontal = i - 1;
 			}
 		}
 	}
-
-	for (j = 0; j < 7; j++)
+	//vertikal
+	for (j = 7; j > 0; j--)
 	{
-		if (r < 4)
-			r = 0;
-		for (i = 0; i < 6; i++)
+		if (bestScoreInVertikal < 3)
+			bestScoreInVertikal = 0;
+		for (i = 6; i > 0; i--)
 		{
 
 			if (spielFeld[i][j] == zeichen)
 			{
 				bestScoreInVertikal++;
+				bestPlaceForVertikal = i - 1;
 
 			}
 		}
 	}
 	if (bestScoreInHorizontal>bestScoreInVertikal)
-		return bestScoreInHorizontal;
+		return bestPlaceForHorizontal ;
 	else if (bestScoreInVertikal > bestScoreInHorizontal)
-		return bestScoreInVertikal;
+		return bestPlaceForVertikal;
 	else
 		return randomGenerator(7, 0);
 }
@@ -293,7 +303,7 @@ int ergebnis(int sp)
 	{
 		if (r < 4)
 			r = 0;
-		for (i = 0; i < 6; i++)
+		for (i = 0; i < 7; i++)
 		{
 			if (spielFeld[j][i] == zeichen)
 			{
@@ -334,7 +344,7 @@ int ergebnis(int sp)
 	return r;
 }
 
-int ausgabe(int i, int j, int sp)
+bool ausgabe(int i, int j, int sp)
 {
 	int a;
 	int b;
@@ -349,7 +359,7 @@ int ausgabe(int i, int j, int sp)
 		for (b = 0; b<7; b++)
 			printf(" %c", spielFeld[a][b]);
 	}
-	return 0;
+	return true;
 }
 
 //pair<char,char> GetBestMove(Farbe sp, char spielFeld[6][7])
