@@ -34,7 +34,8 @@ int minimax(char spielFeld[6][7], Farbe spieler);
 void computerMove(char spielFeld[6][7]);
 int Look_for_win_or_block(Farbe spieler);
 void computer_makes_move(void);
-
+int look_for_the_twoSpaces(Farbe sp);
+int look_for_one_space_two(Farbe sp);
 
 
 int play_randomly(char spielFeld[6][7]);
@@ -134,9 +135,14 @@ void computer_makes_move(void)
 
 				//random_spalte = TrytoWin(spieler);
 				spalte_move = Look_for_win_or_block(Blau);
-				if (spalte_move == NULL)
+				if (spalte_move < NULL)
 				{
 					spalte_move = Look_for_win_or_block(spieler);
+					if (spalte_move < NULL)
+					{
+						spalte_move = randomGenerator(6, 0);
+					}
+
 				}
 			}
 			if (spielFeld[a][spalte_move] == '0')
@@ -269,6 +275,7 @@ int init(void)
 	return 0;
 }
 
+
 int Look_for_win_or_block(Farbe sp)
 {
 	int bestPlace;
@@ -278,23 +285,33 @@ int Look_for_win_or_block(Farbe sp)
 	else
 		zeichen = 'B';
 
-	for (j = 6; j >0; j--)
+	for (j = 5; j >0; j--)
 	{
-		for (i = 7; i > 0; i--)
+		for (i = 6; i >= 0; i--)
 		{
 			//horizontal
-			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen && spielFeld[j][i - 3] == '0')
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen && (spielFeld[j][i - 3] == '0' || spielFeld[j][i+1]=='0'))
 			{
-				return i - 3;
+				return i + 1;
 			}
 			//vertikal
 			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i] == zeichen && spielFeld[j - 2][i] == zeichen && spielFeld[j - 3][i] == '0')
 			{
 				return i;
 			}
-
+			//Example _XX_
+			if (spielFeld[j][i - 1] == '0' && spielFeld[j][i + 2] == '0')
+			{
+				return i - 1;
+			}
+			//Example X_XX
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen)
+			{
+				return j;
+			}
 		}
 	}
+
 
 	return NULL;
 
@@ -361,7 +378,7 @@ void Spielzug(void)
 
 		printf("Spalte: ");
 		int eingabe = scanf_s("%d", &x);
-	} while (x>6 || x <= 0);
+	} while (x>6);
 
 	for (size_t i = 5; i>0; i--)
 	{
