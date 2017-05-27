@@ -290,7 +290,7 @@ int Look_for_win_or_block(Farbe sp)
 		for (i = 6; i >= 0; i--)
 		{
 			//horizontal
-			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen && (spielFeld[j][i - 3] == '0' || spielFeld[j][i+1]=='0'))
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen && (spielFeld[j][i - 3] == '0' || spielFeld[j][i + 1] == '0'))
 			{
 				return i + 1;
 			}
@@ -309,14 +309,23 @@ int Look_for_win_or_block(Farbe sp)
 			{
 				return j;
 			}
+			//Example _XXX
+			//Example _eee
+			if (spielFeld[j][i-1] == '0' && spielFeld[j][i] == zeichen && spielFeld[j][i + 1] == zeichen && spielFeld[j][i + 2] == zeichen)
+			{
+				return j;
+			}
+
+
+			//Diagonal
+
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i + 1] == zeichen && spielFeld[j - 2][i + 2] == zeichen)
+			{
+				return j - 3;
+			}
 		}
 	}
-
-
-	return NULL;
-
-	
-
+	return NULL;	
 }
 int TrytoWin(Farbe sp)
 {
@@ -435,6 +444,25 @@ int ergebnis(int sp)
 				{
 					break;
 				}
+			}
+
+			else if (r < 4)
+				r = 0;
+		}
+	}
+
+	//Diagonal
+	for (j = 5; j > 0; j--)
+	{
+		if (r < 4)
+			r = 0;
+		for (i = 6; i > 0; i--)
+		{
+
+			if (spielFeld[j][i] == zeichen && spielFeld[j-1][i+1] == zeichen && spielFeld[j-2][i+2] == zeichen & spielFeld[j-3][i+3] == zeichen)
+			{
+				r = 4;
+				break;
 			}
 
 			else if (r < 4)
