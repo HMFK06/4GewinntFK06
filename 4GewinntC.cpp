@@ -32,12 +32,14 @@ stack<int, vector<int>> op;
 int runde;
 int minimax(char spielFeld[6][7], Farbe spieler);
 void computerMove(char spielFeld[6][7]);
+int Look_for_win_or_block(Farbe spieler);
+void computer_makes_move(void);
 
 
 
 int play_randomly(char spielFeld[6][7]);
 
-int TrytoWin(char spielFeld[6][7], Farbe sp);
+int TrytoWin(Farbe sp);
 void simulate_plays(char spielFeld[6][7], int number);
 
 
@@ -89,8 +91,8 @@ void get_computer_move(void)
 		for (size_t a = 5; a > 0; a--)
 		{
 			if (ausgegeben)
-				random_spalte = TrytoWin(spielFeld, spieler);
-			//cout <<"Die Zufallszahl lauetet" << random_spalte << endl;
+				//random_spalte = TrytoWin(spieler);
+				random_spalte = Look_for_win_or_block(spieler);
 			if (spielFeld[a][random_spalte] == '0')
 			{
 				ausgegeben = ausgabe(a, random_spalte, spieler);
@@ -99,6 +101,52 @@ void get_computer_move(void)
 			else
 				ausgegeben = false;
 			
+		}
+	}
+
+}
+
+void computer_makes_move(void)
+{
+	int i, j;
+	int farbe = Rot;
+	for (i = 0; i < 6; i++)
+	{
+		for (j = 0; j < 7; j++)
+		{
+			if (spielFeld[i][j] == '0')
+				break;
+		}
+	}
+	if (i*j == 42)  {
+		printf("draw\n");
+		exit(0);
+	}
+	else
+	{
+		bool ausgegeben = true;
+		int random_spalte;
+		int spalte_move;
+		for (size_t a = 5; a > 0; a--)
+		{
+			if (ausgegeben)
+			{
+
+				//random_spalte = TrytoWin(spieler);
+				spalte_move = Look_for_win_or_block(Blau);
+				if (spalte_move == NULL)
+				{
+					spalte_move = Look_for_win_or_block(spieler);
+				}
+			}
+			if (spielFeld[a][spalte_move] == '0')
+			{
+				ausgegeben = ausgabe(a, spalte_move, spieler);
+				break;
+			}
+			else
+				ausgegeben = false;
+
 		}
 	}
 
@@ -171,37 +219,37 @@ int _tmain(int argc, _TCHAR* argv[])
 	printf(" l 3- 0 0 0 0 0 0 0\n");
 	printf(" e 4- 0 0 0 0 0 0 0\n");
 	printf(" n 5- 0 0 0 0 0 0 0\n\n");
-	int value = TrytoWin(spielFeld, spieler);
-	Simulate(1);
+	//Simulate(1);
 
-	//do
-	//{
-	//	spieler = Spielerwechsel(spieler);
-	//	Spielzug();
-	//	printf("\n");
-	//	runde--;
-	//	erg = ergebnis(spieler);
-	//	if (erg >= 4)
-	//	{
-	//		break;
-	//	}
-	//	spieler = Spielerwechsel(spieler);
-	//	printf("Ich denke nach...!\n");
-	//	//Sleep(1000);
-	//	get_computer_move();
-	//	erg = ergebnis(spieler);
-	//	printf("\n");
-	//	runde--;
-	//} while (runde > 0 && erg<4);
-	//
-	//if (runde>0)
-	//{
+	do
+	{
+		spieler = Spielerwechsel(spieler);
+		Spielzug();
+		printf("\n");
+		runde--;
+		erg = ergebnis(spieler);
+		if (erg >= 4)
+		{
+			break;
+		}
+		spieler = Spielerwechsel(spieler);
+		printf("Ich denke nach...!\n");
+		//Sleep(1000);
+		//get_computer_move();
+		computer_makes_move();
+		erg = ergebnis(spieler);
+		printf("\n");
+		runde--;
+	} while (runde > 0 && erg<4);
+	
+	if (runde>0)
+	{
 
-	//	if (spieler > 0)
-	//		printf("Sieg!!! Spieler Rot hat gewonnen\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
-	//	else
-	//		printf("Sieg!!! Spieler Blau hat gewonnen\n");
-	//}
+		if (spieler > 0)
+			printf("Sieg!!! Spieler Rot hat gewonnen\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
+		else
+			printf("Sieg!!! Spieler Blau hat gewonnen\n");
+	}
 	system("pause"); //damit sich das Programm nicht selber beendet wen das Spiel fertig ist.
 	return 0;
 }
@@ -221,8 +269,39 @@ int init(void)
 	return 0;
 }
 
+int Look_for_win_or_block(Farbe sp)
+{
+	int bestPlace;
+	int i, j, r = 0;
+	if (sp < 0)
+		zeichen = 'A';
+	else
+		zeichen = 'B';
 
-int TrytoWin(char spielFeld[6][7], Farbe sp)
+	for (j = 6; j >0; j--)
+	{
+		for (i = 7; i > 0; i--)
+		{
+			//horizontal
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen && spielFeld[j][i - 3] == '0')
+			{
+				return i - 3;
+			}
+			//vertikal
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i] == zeichen && spielFeld[j - 2][i] == zeichen && spielFeld[j - 3][i] == '0')
+			{
+				return i;
+			}
+
+		}
+	}
+
+	return NULL;
+
+	
+
+}
+int TrytoWin(Farbe sp)
 {
 	int bestColumn = 0;
 	int bestScoreInHorizontal = 0;
@@ -264,6 +343,7 @@ int TrytoWin(char spielFeld[6][7], Farbe sp)
 			}
 		}
 	}
+	
 	if (bestScoreInHorizontal>bestScoreInVertikal)
 		return bestPlaceForHorizontal ;
 	else if (bestScoreInVertikal > bestScoreInHorizontal)
@@ -275,9 +355,13 @@ int TrytoWin(char spielFeld[6][7], Farbe sp)
 void Spielzug(void)
 {
 	int x;
-	printf("Spalte: ");
-	scanf_s("%d", &x);
+	do
+	{
 
+
+		printf("Spalte: ");
+		int eingabe = scanf_s("%d", &x);
+	} while (x>6 || x <= 0);
 
 	for (size_t i = 5; i>0; i--)
 	{
