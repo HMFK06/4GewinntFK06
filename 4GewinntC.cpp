@@ -16,7 +16,6 @@
 
 using namespace std;
 
-//asdklfjasdklfjasdöklajfsdklfjsd öklsdjföklsdfjs öklfsdjöflas
 enum Farbe{ Rot = 1, Blau = -1, Leer = 0 };
 
 char spielFeld[6][7];
@@ -34,19 +33,10 @@ int minimax(char spielFeld[6][7], Farbe spieler);
 void computerMove(char spielFeld[6][7]);
 int Look_for_win_or_block(Farbe spieler);
 void computer_makes_move(void);
-int look_for_the_twoSpaces(Farbe sp);
-int look_for_one_space_two(Farbe sp);
-
-
 int play_randomly(char spielFeld[6][7]);
-
 int TrytoWin(Farbe sp);
 void simulate_plays(char spielFeld[6][7], int number);
-
-
-
 void Spielzug(void);
-
 
 Farbe Spielerwechsel(Farbe farbe)
 {
@@ -152,10 +142,8 @@ void computer_makes_move(void)
 			}
 			else
 				ausgegeben = false;
-
 		}
 	}
-
 }
 
 
