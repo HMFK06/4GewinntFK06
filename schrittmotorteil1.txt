@@ -1,0 +1,20 @@
+#include <Stepper.h> // Hinzufügen der Programmbibliothek.
+int SPU = 2048; // Schritte pro Umdrehung.
+int wurffeld;
+int incomingByte;  
+Stepper Motor(SPU, 3,5,4,6); // Der Schrittmotor erhält die Bezeichnung "Motor" und es wird angegeben an welchen Pins der Motor angeschlossen ist.
+
+void setup() //Hier beginnt das Setup.
+{
+
+Motor.setSpeed(18); // Angabe der Geschwindigkeit in Umdrehungen pro Minute.
+}
+
+void loop() {
+  // Loch 1
+Motor.step(2048); // Der Motor macht 2048 Schritte, das entspricht einer Umdrehung.
+delay(300); // Durch diese Pause bleibt der Motor nach der Drehung für eine Sekunde stehen.
+Motor.step(-2048); // Der Motor macht durch das Minuszeichen 2048 Schritte in die andere Richtung.
+delay(300); // Durch diese Pause bleibt der Motor nach der Drehung für eine Sekunde stehen.
+Motor.setSpeed(0); // Motor hört auf sich zu drehen
+}
