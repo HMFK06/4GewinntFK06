@@ -11,13 +11,14 @@
 #include <stack>
 #include <time.h>
 #include <algorithm>
+#include "AI.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 
 using namespace std;
 
 enum Farbe{ Rot = 1, Blau = -1, Leer = 0 };
-
+Ausgabe(2);
 char spielFeld[6][7];
 char zeichen;
 Farbe spieler = Rot;
@@ -37,6 +38,7 @@ int play_randomly(char spielFeld[6][7]);
 int TrytoWin(Farbe sp);
 void simulate_plays(char spielFeld[6][7], int number);
 void Spielzug(void);
+int gewinnChance = 0;
 
 Farbe Spielerwechsel(Farbe farbe)
 {
@@ -101,20 +103,20 @@ void computer_makes_move(void)
 {
 	int i, j;
 	int farbe = Rot;
-	for (i = 0; i < 6; i++)
-	{
-		for (j = 0; j < 7; j++)
-		{
-			if (spielFeld[i][j] == '0')
-				break;
-		}
-	}
-	if (i*j == 42)  {
-		printf("draw\n");
-		exit(0);
-	}
-	else
-	{
+	//for (i = 0; i < 6; i++)
+	//{
+	//	for (j = 0; j < 7; j++)
+	//	{
+	//		if (spielFeld[i][j] == '0')
+	//			break;
+	//	}
+	//}
+	//if (i*j == 42)  {
+	//	printf("draw\n");
+	//	exit(0);
+	//}
+	//else
+	//{
 		bool ausgegeben = true;
 		int random_spalte;
 		int spalte_move;
@@ -125,6 +127,11 @@ void computer_makes_move(void)
 
 				//random_spalte = TrytoWin(spieler);
 				spalte_move = Look_for_win_or_block(Blau);
+				int SpielerChance = gewinnChance;
+				int test_spalte_move = Look_for_win_or_block(spieler);
+				int ComputerChance = gewinnChance;
+				if (SpielerChance < ComputerChance)
+					spalte_move = -1;
 				if (spalte_move < NULL)
 				{
 					spalte_move = Look_for_win_or_block(spieler);
@@ -143,7 +150,7 @@ void computer_makes_move(void)
 			else
 				ausgegeben = false;
 		}
-	}
+	//}
 }
 
 
@@ -264,8 +271,10 @@ int init(void)
 }
 
 
+
 int Look_for_win_or_block(Farbe sp)
 {
+	gewinnChance = 0;
 	int bestPlace;
 	int i, j, r = 0;
 	if (sp < 0)
@@ -277,30 +286,47 @@ int Look_for_win_or_block(Farbe sp)
 	{
 		for (i = 6; i >= 0; i--)
 		{
-			//horizontal
-			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen && (spielFeld[j][i - 3] == '0' || spielFeld[j][i + 1] == '0'))
+			//horizontal // Gewinnchance sehr hoch!!!!
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i - 1] == zeichen && spielFeld[j][i - 2] == zeichen)
 			{
-				return i + 1;
+				//(spielFeld[j][i - 3] == '0' || spielFeld[j][i + 1] == '0')
+				if (spielFeld[j][i - 3] == '0' && i > 2)
+				{
+					gewinnChance = 1;
+					return i - 3;
+					
+				}
+				if (spielFeld[j][i + 1] == '0' && i < 6)
+				{
+					gewinnChance = 1;
+					return i + 1;
+					
+				}
+
 			}
 			//vertikal
 			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i] == zeichen && spielFeld[j - 2][i] == zeichen && spielFeld[j - 3][i] == '0')
 			{
+				gewinnChance = 1;
 				return i;
 			}
 			//Example _XX_
-			if (spielFeld[j][i - 1] == '0' && spielFeld[j][i + 2] == '0')
+			if (spielFeld[j][i - 1] == '0' && spielFeld[j][i]==zeichen && spielFeld[j][i+1]==zeichen && spielFeld[j][i + 2] == '0' && i>0)
 			{
 				return i - 1;
 			}
 			//Example X_XX
-			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen)
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen && i<4)
 			{
-				return j;
+					gewinnChance = 1;
+					return j;
+
 			}
 			//Example _XXX
 			//Example _eee
-			if (spielFeld[j][i-1] == '0' && spielFeld[j][i] == zeichen && spielFeld[j][i + 1] == zeichen && spielFeld[j][i + 2] == zeichen)
+			if (spielFeld[j][i-1] == '0' && spielFeld[j][i] == zeichen && spielFeld[j][i + 1] == zeichen)
 			{
+				if (spielFeld[j][i + 2] == zeichen && i<5)
 				return j;
 			}
 
@@ -309,7 +335,9 @@ int Look_for_win_or_block(Farbe sp)
 
 			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i + 1] == zeichen && spielFeld[j - 2][i + 2] == zeichen)
 			{
+				gewinnChance = 1;
 				return j - 3;
+				
 			}
 		}
 	}
