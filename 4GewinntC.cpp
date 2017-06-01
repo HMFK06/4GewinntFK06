@@ -13,12 +13,13 @@
 #include <algorithm>
 #include "AI.h"
 
+
 #define _CRT_SECURE_NO_WARNINGS
 
 using namespace std;
 
 enum Farbe{ Rot = 1, Blau = -1, Leer = 0 };
-Ausgabe(2);
+
 char spielFeld[6][7];
 char zeichen;
 Farbe spieler = Rot;
@@ -39,6 +40,8 @@ int TrytoWin(Farbe sp);
 void simulate_plays(char spielFeld[6][7], int number);
 void Spielzug(void);
 int gewinnChance = 0;
+int openSpace[7];
+Intelligenz a;
 
 Farbe Spielerwechsel(Farbe farbe)
 {
@@ -96,11 +99,11 @@ void get_computer_move(void)
 			
 		}
 	}
-
 }
 
 void computer_makes_move(void)
 {
+	
 	int i, j;
 	int farbe = Rot;
 	//for (i = 0; i < 6; i++)
@@ -120,11 +123,44 @@ void computer_makes_move(void)
 		bool ausgegeben = true;
 		int random_spalte;
 		int spalte_move;
-		for (size_t a = 5; a > 0; a--)
+
+#pragma region test
+		//for (size_t a = 5; a >= 0; a--)
+		//{
+		//	if (ausgegeben)
+		//	{
+
+		//		//random_spalte = TrytoWin(spieler);
+		//		spalte_move = Look_for_win_or_block(Blau);
+		//		int SpielerChance = gewinnChance;
+		//		int test_spalte_move = Look_for_win_or_block(spieler);
+		//		int ComputerChance = gewinnChance;
+		//		if (SpielerChance < ComputerChance)
+		//			spalte_move = -1;
+		//		if (spalte_move < NULL)
+		//		{
+		//			spalte_move = Look_for_win_or_block(spieler);
+		//			if (spalte_move < NULL)
+		//			{
+		//				spalte_move = randomGenerator(6, 0);
+		//			}
+
+		//		}
+		//	}
+		//	if (spielFeld[a][spalte_move] == '0')
+		//	{
+		//		ausgegeben = ausgabe(a, spalte_move, spieler);
+		//		break;
+		//	}
+		//	else
+		//		ausgegeben = false;
+		//}
+#pragma endregion
+
+		do
 		{
 			if (ausgegeben)
 			{
-
 				//random_spalte = TrytoWin(spieler);
 				spalte_move = Look_for_win_or_block(Blau);
 				int SpielerChance = gewinnChance;
@@ -139,17 +175,15 @@ void computer_makes_move(void)
 					{
 						spalte_move = randomGenerator(6, 0);
 					}
-
 				}
 			}
-			if (spielFeld[a][spalte_move] == '0')
+			if (openSpace[spalte_move] >= 0)
 			{
-				ausgegeben = ausgabe(a, spalte_move, spieler);
+				ausgegeben = ausgabe(openSpace[spalte_move], spalte_move, spieler);
+				openSpace[spalte_move]--;
 				break;
 			}
-			else
-				ausgegeben = false;
-		}
+		} while (openSpace[spalte_move]>=0);
 	//}
 }
 
@@ -197,13 +231,14 @@ void Simulate(int wieOft)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	openSpaces.push_back(make_pair('2', '3'));
-	pair<char, char> a = openSpaces[0];
+
+
 	int runde = 42; //42 ergibt sich aus der maximal Anzahl Felder die das Spielfeld hat. 7*6=42.
 	int i;
 	int j;
 	//Diese Variabel gibt den aktuellen Spieler an. 1 steht für Spieler B (=Spieler 2) und -1 steht für Spieler A (=Spieler 1).
 	init();
+
 
 	printf("4 Gewinnt\n"); //Titel
 	printf("---------\n\n");
@@ -233,10 +268,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			break;
 		}
+		
 		spieler = Spielerwechsel(spieler);
 		printf("Ich denke nach...!\n");
 		//Sleep(1000);
 		//get_computer_move();
+		
 		computer_makes_move();
 		erg = ergebnis(spieler);
 		printf("\n");
@@ -248,8 +285,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if (spieler > 0)
 			printf("Sieg!!! Spieler Rot hat gewonnen\n"); //Hat ein Spieler gewonnen so erschein diese Meldung.
-		else
+		else if (spieler<0)
 			printf("Sieg!!! Spieler Blau hat gewonnen\n");
+	}
+	else{
+		printf("Unentschieden!!!");
 	}
 	system("pause"); //damit sich das Programm nicht selber beendet wen das Spiel fertig ist.
 	return 0;
@@ -267,20 +307,28 @@ int init(void)
 			spielFeld[x][y] = '0';
 		}
 	}
+
+	for (size_t i = 0; i < 7; i++)
+	{
+		openSpace[i] = 5;
+	}
+
 	return 0;
+
+
 }
 
 
 
 int Look_for_win_or_block(Farbe sp)
 {
-	gewinnChance = 0;
+	gewinnChance = -1;
 	int bestPlace;
 	int i, j, r = 0;
 	if (sp < 0)
-		zeichen = 'A';
+		zeichen = 'X';
 	else
-		zeichen = 'B';
+		zeichen = 'R';
 
 	for (j = 5; j >0; j--)
 	{
@@ -302,7 +350,6 @@ int Look_for_win_or_block(Farbe sp)
 					return i + 1;
 					
 				}
-
 			}
 			//vertikal
 			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i] == zeichen && spielFeld[j - 2][i] == zeichen && spielFeld[j - 3][i] == '0')
@@ -316,10 +363,17 @@ int Look_for_win_or_block(Farbe sp)
 				return i - 1;
 			}
 			//Example X_XX
-			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen && i<4)
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen && spielFeld[j][i+1] && i<4)
 			{
 					gewinnChance = 1;
-					return j;
+					return i+1;
+
+			}
+			//Example XX_X
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 1] == zeichen && spielFeld[j][i + 3] == zeichen && spielFeld[j][i+2]=='0' && i<4)
+			{
+				gewinnChance = 1;
+				return i+2;
 
 			}
 			//Example _XXX
@@ -333,65 +387,20 @@ int Look_for_win_or_block(Farbe sp)
 
 			//Diagonal
 
-			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i + 1] == zeichen && spielFeld[j - 2][i + 2] == zeichen)
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i + 1] == zeichen && spielFeld[j - 2][i + 2] == zeichen && spielFeld[j-3][i+3]=='0')
 			{
 				gewinnChance = 1;
-				return j - 3;
-				
+				return i+3;
 			}
-		}
-	}
-	return NULL;	
-}
-int TrytoWin(Farbe sp)
-{
-	int bestColumn = 0;
-	int bestScoreInHorizontal = 0;
-	int bestScoreInVertikal = 0;
-	int bestPlaceForHorizontal, bestPlaceForVertikal;
-	int i, j, r = 0;
-	if (sp < 0)
-		zeichen = 'A';
-	else
-		zeichen = 'B';
-	//horizontal
 
-	for (j = 6; j > 0; j--)
-	{
-		if (r < 4)
-			r = 0;
-		for (i = 7; i >0; i--)
-		{
-			if (spielFeld[j][i] == zeichen)
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i - 1] == zeichen && spielFeld[j - 2][i - 2] == zeichen && spielFeld[j - 3][i - 3] == '0' && i>4)
 			{
-				bestScoreInHorizontal++;
-				bestPlaceForHorizontal = i - 1;
+				gewinnChance = 1;
+				return i- 3;
 			}
 		}
 	}
-	//vertikal
-	for (j = 7; j > 0; j--)
-	{
-		if (bestScoreInVertikal < 3)
-			bestScoreInVertikal = 0;
-		for (i = 6; i > 0; i--)
-		{
-
-			if (spielFeld[i][j] == zeichen)
-			{
-				bestScoreInVertikal++;
-				bestPlaceForVertikal = i - 1;
-
-			}
-		}
-	}
-	
-	if (bestScoreInHorizontal>bestScoreInVertikal)
-		return bestPlaceForHorizontal ;
-	else if (bestScoreInVertikal > bestScoreInHorizontal)
-		return bestPlaceForVertikal;
-	else
-		return randomGenerator(7, 0);
+	return -1;	
 }
 
 void Spielzug(void)
@@ -399,20 +408,23 @@ void Spielzug(void)
 	int x;
 	do
 	{
-
-
 		printf("Spalte: ");
 		int eingabe = scanf_s("%d", &x);
+		if (openSpace[x] < 0)
+			x = 7;
 	} while (x>6);
-
-	for (size_t i = 5; i>0; i--)
-	{
-		if (spielFeld[i][x] == '0')
-		{
-			ausgabe(i, x, spieler);
-			break;
-		}
-	}
+	ausgabe(openSpace[x], x, spieler);
+	openSpace[x]--;
+	//for (size_t i = 5; i>0; i--)
+	//{
+	//	if (spielFeld[i][x] == '0')
+	//	{
+	//		ausgabe(i, x, spieler);
+	//		openSpace[x]--;
+	//		break;
+	//	}
+	//}
+	
 }
 
 int ergebnis(int sp)
@@ -420,9 +432,9 @@ int ergebnis(int sp)
 	char zeichnen;
 	int i, j, r = 0;
 	if (sp < 0)
-		zeichen = 'A';
+		zeichen = 'X';
 	else
-		zeichen = 'B';
+		zeichen = 'R';
 	//Zeilen
 	//zeichen = 'A';
 	for (j = 0; j < 6; j++)
@@ -494,9 +506,9 @@ bool ausgabe(int i, int j, int sp)
 	int a;
 	int b;
 	if (sp<0)
-		spielFeld[i][j] = 'A';
+		spielFeld[i][j] = 'X';
 	if (sp>0)
-		spielFeld[i][j] = 'B';
+		spielFeld[i][j] = 'R';
 	printf("\n");
 	for (a = 0; a<7; a++)
 	{
