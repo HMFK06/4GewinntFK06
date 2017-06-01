@@ -360,10 +360,11 @@ int Look_for_win_or_block(Farbe sp)
 			//Example _XX_
 			if (spielFeld[j][i - 1] == '0' && spielFeld[j][i]==zeichen && spielFeld[j][i+1]==zeichen && spielFeld[j][i + 2] == '0' && i>0)
 			{
+				gewinnChance = 1;
 				return i - 1;
 			}
 			//Example X_XX
-			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen && spielFeld[j][i+1] && i<4)
+			if (spielFeld[j][i] == zeichen && spielFeld[j][i + 2] == zeichen && spielFeld[j][i + 3] == zeichen && spielFeld[j][i+1]=='0' && i<4)
 			{
 					gewinnChance = 1;
 					return i+1;
