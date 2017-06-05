@@ -3,7 +3,6 @@
 #include "stdafx.h"
 #include <stdlib.h>
 #include <time.h>
-#include <iostream>
 
 int gewinnChance2 = 0;
 int randomGenerator2(int max, int min)
