@@ -16,6 +16,14 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#define ANSI_COLOR_RED     "\x1b[31m"
+#define ANSI_COLOR_GREEN   "\x1b[32m"
+#define ANSI_COLOR_YELLOW  "\x1b[33m"
+#define ANSI_COLOR_BLUE    "\x1b[34m"
+#define ANSI_COLOR_MAGENTA "\x1b[35m"
+#define ANSI_COLOR_CYAN    "\x1b[36m"
+#define ANSI_COLOR_RESET   "\x1b[0m"
+
 using namespace std;
 
 enum Farbe{ Rot = 1, Blau = -1, Leer = 0 };
@@ -340,19 +348,40 @@ int Look_for_win_or_block(Farbe sp)
 				//(spielFeld[j][i - 3] == '0' || spielFeld[j][i + 1] == '0')
 				if (spielFeld[j][i - 3] == '0' && i > 2)
 				{
-					gewinnChance = 1;
-					return i - 3;
-					
+					if (j < 5)
+					{
+						if (spielFeld[j - 1][i - 3] != '0')
+						{
+							gewinnChance = 1;
+							return i - 3;
+						}
+					}
+					else
+					{
+						gewinnChance = 1;
+						return i - 3;
+					}
 				}
+
 				if (spielFeld[j][i + 1] == '0' && i < 6)
 				{
-					gewinnChance = 1;
-					return i + 1;
-					
+					if (j > 5)
+					{
+						if (spielFeld[j - 1][i + 1] != '0')
+						{
+							gewinnChance = 1;
+							return i +1;
+						}
+					}
+					else
+					{
+						gewinnChance = 1;
+						return i + 1;
+					}
 				}
 			}
 			//vertikal
-			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i] == zeichen && spielFeld[j - 2][i] == zeichen && spielFeld[j - 3][i] == '0')
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i] == zeichen && spielFeld[j - 2][i] == zeichen && spielFeld[j - 3][i] == '0' && openSpace[i]>=0)
 			{
 				gewinnChance = 1;
 				return i;
@@ -388,16 +417,16 @@ int Look_for_win_or_block(Farbe sp)
 
 			//Diagonal
 
-			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i + 1] == zeichen && spielFeld[j - 2][i + 2] == zeichen && spielFeld[j-3][i+3]=='0')
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i + 1] == zeichen && spielFeld[j - 2][i + 2] == zeichen && spielFeld[j-3][i+3]=='0' && i<4 && spielFeld[j-2][i+3]!='0')
 			{
 				gewinnChance = 1;
 				return i+3;
 			}
 
-			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i - 1] == zeichen && spielFeld[j - 2][i - 2] == zeichen && spielFeld[j - 3][i - 3] == '0' && i>4)
+			if (spielFeld[j][i] == zeichen && spielFeld[j - 1][i - 1] == zeichen && spielFeld[j - 2][i - 2] == zeichen && spielFeld[j - 3][i - 3] == '0' && i>4 && spielFeld[j-2][i - 3] != '0')
 			{
 				gewinnChance = 1;
-				return i- 3;
+				return i - 3;
 			}
 		}
 	}
@@ -485,10 +514,9 @@ int ergebnis(int sp)
 	{
 		if (r < 4)
 			r = 0;
-		for (i = 6; i > 0; i--)
+		for (i = 6; i >= 0; i--)
 		{
-
-			if (spielFeld[j][i] == zeichen && spielFeld[j-1][i+1] == zeichen && spielFeld[j-2][i+2] == zeichen & spielFeld[j-3][i+3] == zeichen)
+			if (spielFeld[j][i] == zeichen && spielFeld[j-1][i+1] == zeichen && spielFeld[j-2][i+2] == zeichen & spielFeld[j-3][i+3] == zeichen && spielFeld[j-4][i+3]!='0')
 			{
 				r = 4;
 				break;
@@ -511,10 +539,13 @@ bool ausgabe(int i, int j, int sp)
 	if (sp>0)
 		spielFeld[i][j] = 'R';
 	printf("\n");
+	//system("Color 1A");
+	//HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	//SetConsoleTextAttribute(hConsole, 12);
 	for (a = 0; a<7; a++)
 	{
 		printf("\n");
-		for (b = 0; b<7; b++)
+		for (b = 0; b < 7; b++)
 			printf(" %c", spielFeld[a][b]);
 	}
 	return true;
